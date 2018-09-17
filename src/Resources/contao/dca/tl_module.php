@@ -3,7 +3,7 @@
 /**
  * add palettes
  */
-$GLOBALS['TL_DCA']['tl_module']['palettes']['contao_speisekarte_speisekarte'] = '{title_legend},name,headline,type;{contaospeisekarte_legend},contaospeisekarte_kategorien,contaospeisekarte_zusatzstoffe,contaospeisekarte_allergene';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['contao_speisekarte_speisekarte'] = '{titel_legend},name,headline,type;{contaospeisekarte_legend},contaospeisekarte_kategorien,contaospeisekarte_zusatzstoffe,contaospeisekarte_allergene';
 
 /**
  * add fields
@@ -14,7 +14,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['contaospeisekarte_kategorien'] = arra
     'label'                   => &$GLOBALS['TL_LANG']['tl_module']['contaospeisekarte_kategorien'],
     'exclude'                 => true,
     'inputType'               => 'checkboxWizard',
-    'foreignKey' => 'tl_contao_speisekarte_kategorien.title',
+    'foreignKey' => 'tl_contao_speisekarte_kategorien.titel',
     'relation' => array(
         'type' => 'belongsTo',
         'table' => 'tl_contao_speisekarte_kategorien',
