@@ -3,8 +3,9 @@
     "description": "Speisekarte Extension for Contao Open Source",
     "type": "contao-bundle",
     "require": {
-        "contao/core-bundle": "^4.3",
-        "contao-community-alliance/composer-plugin":"~2.4 || ~3.0"
+        "contao/core-bundle": "4.4.*",
+        "contao-community-alliance/composer-plugin":"~2.4 || ~3.0",
+        "codefog/contao-haste": "^4.20"
     },
     "require-dev": {
         "contao/manager-plugin": "^2.0"
