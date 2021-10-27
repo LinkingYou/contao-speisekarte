@@ -1,5 +1,17 @@
 <?php
 
+/**
+ * file : 20210729°1211 contao-speisekarte/src/Module/ModuleContaoSpeisekarte.php
+ * @license    http://opensource.org/licenses/lgpl-3.0.html LGPL
+ * @copyright  Copyright (c) 2017, Frank Müller
+ * @author     Frank Müller
+ * @author     Modifications by Norbert C. Maier <https://github.com/normai/contao-speisekarte>
+ * summary   : Sort foods by their backend order
+ * version   :
+ * version   : 20210803°1311 Sort foods by backend order
+ * encoding  : UTF-8-without-BOM, UNIX-style-line-end '0x0a'
+ */
+
 namespace LinkingYou\ContaoSpeisekarte\Module;
 
 use Contao\Module;
@@ -39,7 +51,24 @@ class ModuleContaoSpeisekarte extends Module {
                 $zusatstoffliste = array();
                 $allergenliste = array();
                 foreach ($speisenObjekt as $item) {
+
                     $speise = array();
+
+                    // ---------------------------------
+                    // Field for sorting after backend order [line 20210803°1231]
+                    $speise["sorting"] = $item->sorting;
+                    // ---------------------------------
+
+                    // ---------------------------------
+                    // Field for possible image [seq 20210806°0931]
+                    $speise["imageurl"] = $item->dishpic;
+
+                    // Todo 20210806°0933 : How to retrieve the image url from
+                    //   the image id, or whatever this cryptic string is called?!
+
+
+                    // ---------------------------------
+
                     $speise["titel"] = $item->titel;
                     if ($item->menge) {
                         $speise["menge"] = $item->menge;
@@ -47,7 +76,9 @@ class ModuleContaoSpeisekarte extends Module {
                         $speise["menge"] = null;
                     }
                     if ($item->preis) {
-                        $speise["preis"] = number_format($item->preis,2,',','.');
+                        // Why does the Contao debugger not complain about the missing
+                        //  float cast here, as it does below? [note 20210729°1114]
+                        $speise["preis"] = number_format($item->preis, 2, ',', '.');
                     } else {
                         $speise["preis"] = null;
                     }
@@ -62,7 +93,9 @@ class ModuleContaoSpeisekarte extends Module {
                         $speise["menge2"] = null;
                     }
                     if ($item->preis) {
-                        $speise["preis2"] = number_format($item->preis2,2,',','.');
+                        // [Fix 20210729°1111 see ss 20210729°1112] Add '(float)' to avoid Contao debugger
+                        // "Warning: number_format() expects parameter 1 to be float, string given"
+                        $speise["preis2"] = number_format( (float) $item->preis2, 2, ',', '.');
                     } else {
                         $speise["preis2"] = null;
                     }
@@ -72,7 +105,8 @@ class ModuleContaoSpeisekarte extends Module {
                         $speise["menge3"] = null;
                     }
                     if ($item->preis) {
-                        $speise["preis3"] = number_format($item->preis3,2,',','.');
+                        // [Fix 20210729°1113] Add '(float)', same as in above fix 20210729°1111
+                        $speise["preis3"] = number_format( (float) $item->preis3, 2, ',', '.');
                     } else {
                         $speise["preis3"] = null;
                     }
@@ -108,21 +142,62 @@ class ModuleContaoSpeisekarte extends Module {
                     $speisenliste[] = $speise;
                 }
 
+                //--------------------------------------
+                // Debug output [line 20210729°1121 ncm]
+                if (FALSE) {
+                    print_r($speisenliste);
+                }
+
+                // Do the sorting [seq 20210729°1231]
+                // Note : This is done late. It could be done earlier, notably at the SQL query.
+                if (TRUE) {
+                    $bSuccess = usort($speisenliste, 'self::sortBySorting');
+                }
+
+                // Debug output [seq 20210729°1122]
+                if (FALSE) {
+                   print_r('Success = ');
+                   print_r($bSuccess ? 'true' : 'false');
+                   print_r('Speisenliste = ');
+                   print_r($speisenliste);
+                }
+                //--------------------------------------
+
                 asort($zusatstoffliste);
 
-                $speisekarte[] = array(
-                    'kategorie' => $kategorie->titel,
-                    'speisenliste'=> $speisenliste,
+                $speisekarte[] = array (
+                    'kategorie'        => $kategorie->titel,
+                    'speisenliste'     => $speisenliste,
                     'zusatzstoffliste' => implode(', ', $zusatstoffliste),
-                    'allergenliste' => implode(',', $allergenliste)
+                    'allergenliste'    => implode(',', $allergenliste)
                 );
             }
 
             $this->Template->speisekarte = $speisekarte;
         }
-
-
-
     }
 
+    /**
+     * Function for sorting the dishes
+     *
+     * • Perhaps this functionality could even be done without any code,
+     *   just by definitions in dca/tl_contao_speisekarte_speisen.php
+     *
+     * • This function could as well (or rather) be implemented
+     *   as an anonymous function at the location of use.
+     *
+     * id : func 20210729°1221
+     */
+    public static function sortBySorting($a, $b) {
+
+        // Debug output [seq 20210729°1227]
+        if (FALSE) {
+            print_r('SORT : ' . $a['sorting'] . ' vs. ' . $b['sorting'] . " -- <br>\n");
+        }
+
+        if ($a['sorting'] == $b['sorting']) {
+            return 0;
+        }
+        return ($a['sorting'] < $b['sorting']) ? -1 : 1;
+    }
 }
