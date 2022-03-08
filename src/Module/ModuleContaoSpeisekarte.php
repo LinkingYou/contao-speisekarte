@@ -32,7 +32,9 @@ class ModuleContaoSpeisekarte extends Module {
 
                 $speisenObjekt = ContaoSpeisekarteSpeisenModel::findBy(
                     'pid',
-                    $kategorie->id
+                    $kategorie->id, [
+                        'order' => 'sorting'
+                    ]
                 );
 
                 $speisenliste = array();
@@ -41,13 +43,17 @@ class ModuleContaoSpeisekarte extends Module {
                 foreach ($speisenObjekt as $item) {
                     $speise = array();
                     $speise["titel"] = $item->titel;
+                    $speise["nummer"] = $item->nummer;
+                    $speise["zusatzstoffe"] = null;
+                    $speise["allergene"] = null;
+
                     if ($item->menge) {
                         $speise["menge"] = $item->menge;
                     } else {
                         $speise["menge"] = null;
                     }
                     if ($item->preis) {
-                        $speise["preis"] = number_format($item->preis,2,',','.');
+                        $speise["preis"] = number_format((float) $item->preis,2,',','.');
                     } else {
                         $speise["preis"] = null;
                     }
@@ -56,23 +62,23 @@ class ModuleContaoSpeisekarte extends Module {
                     } else {
                         $speise["einheit"] = null;
                     }
-                    if ($item->menge) {
+                    if ($item->menge2) {
                         $speise["menge2"] = $item->menge2;
                     } else {
                         $speise["menge2"] = null;
                     }
-                    if ($item->preis) {
-                        $speise["preis2"] = number_format($item->preis2,2,',','.');
+                    if ($item->preis2) {
+                        $speise["preis2"] = number_format((float) $item->preis2,2,',','.');
                     } else {
                         $speise["preis2"] = null;
                     }
-                    if ($item->menge) {
+                    if ($item->menge3) {
                         $speise["menge3"] = $item->menge3;
                     } else {
                         $speise["menge3"] = null;
                     }
-                    if ($item->preis) {
-                        $speise["preis3"] = number_format($item->preis3,2,',','.');
+                    if ($item->preis3) {
+                        $speise["preis3"] = number_format((float) $item->preis3,2,',','.');
                     } else {
                         $speise["preis3"] = null;
                     }
