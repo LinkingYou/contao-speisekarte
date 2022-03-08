@@ -12,8 +12,10 @@ class Zusatzstoffe {
         $zusatzstoffe = ContaoSpeisekarteZusatzstoffeModel::findAll();
 
         $result = array();
-        foreach ($zusatzstoffe as $zusatzstoff) {
-            $result[$zusatzstoff->id] = '(' . $zusatzstoff->kuerzel . ') ' . $zusatzstoff->titel;
+        if ($zusatzstoffe) {
+            foreach ($zusatzstoffe as $zusatzstoff) {
+                $result[$zusatzstoff->id] = '(' . $zusatzstoff->kuerzel . ') ' . $zusatzstoff->titel;
+            }
         }
         return $result;
     }

@@ -12,8 +12,10 @@ class Allergene {
         $allergene = ContaoSpeisekarteAllergeneModel::findAll();
 
         $result = array();
-        foreach ($allergene as $allergen) {
-            $result[$allergen->id] = $allergen->titel;
+        if ($allergene) {
+            foreach ($allergene as $allergen) {
+                $result[$allergen->id] = $allergen->titel;
+            }
         }
         return $result;
     }
